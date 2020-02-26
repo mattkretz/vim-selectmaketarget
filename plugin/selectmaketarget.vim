@@ -2,11 +2,10 @@
 " Maintainer:   Matthias Kretz <m.kretz@gsi.de>
 " Version:      1.0
 "
-let g:Maketarget='@@@ MakeTarget Placeholder @@@'
 
 function! s:SelectMakeTargetThis(build)
-    let g:Maketarget=getline('.')
-    exec ":bd!"
+    let s:Maketarget=getline('.')
+    bd!
     if a:build > 0
         call MakeTarget()
     endif
@@ -18,6 +17,9 @@ function! SelectMakeTarget(build)
     let l:mp1 = substitute(&mp, '\$\*', 'help', '')
     silent vertical botright new
     silent vertical resize 60
+    normal IGenerating list of targets...
+    redraw
+    silent normal 0D
     silent exec "0r !" . l:mp0 . " 2>/dev/null || " . l:mp1 . " 2>/dev/null"
     silent exec ":%s/: .*$//e"
     silent exec ":%s/^\.\.\. //e"
@@ -40,28 +42,29 @@ function! SelectMakeTarget(build)
     setlocal winfixwidth
     setlocal nospell
 
-    if a:build > 0
-        noremap <buffer> <CR> :call <SID>SelectMakeTargetThis(1)<CR>
-    else
-        noremap <buffer> <CR> :call <SID>SelectMakeTargetThis(0)<CR>
-    endif
+    exec ":noremap <buffer> <CR> :call <SID>SelectMakeTargetThis(" . a:build . ")<CR>"
+    nnoremap <nowait> <silent> <buffer> <ESC> :bd!<CR>
 endfunction
 
 function! MakeTarget()
-    if g:Maketarget == '@@@ MakeTarget Placeholder @@@'
+    if !exists('s:Maketarget')
         call SelectMakeTarget(1)
     else
         if exists(":Make")
-            exec ":AbortDispatch"
-            exec ":Make! ".g:Maketarget
-            exec ":Copen"
+            let l:curwin = winnr()
+            AbortDispatch
+            let $COLUMNS = &co
+            exec ":Make! ".s:Maketarget
+            Copen
+            exec l:curwin . 'wincmd w'
         else
-            exec ":make! ".g:Maketarget
+            exec ":make! ".s:Maketarget
         endif
     endif
 endfunction
 
 nmap <F10> :call MakeTarget()<CR>
+nmap <S-F10> :call SelectMakeTarget(1)<CR>
 nmap <F9> :call SelectMakeTarget(0)<CR>
 
 " vim: sw=4 et
