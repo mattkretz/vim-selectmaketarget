@@ -116,9 +116,9 @@ function! MakeTarget()
             let l:curwin = winnr()
             AbortDispatch
             let $COLUMNS = &co
-            exec ":Make! ".s:Maketarget
-            Copen
-            exec l:curwin . 'wincmd w'
+            exec ":Make ".s:Maketarget
+            "Copen
+            "exec l:curwin . 'wincmd w'
         else
             exec ":make! ".s:Maketarget
         endif
