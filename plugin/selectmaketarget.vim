@@ -85,12 +85,10 @@ function! SelectMakeTarget(build)
         call append(line('$'), l:help)
         silent exec ":%s/: .*$//e"
         silent exec ":%s/^\.\.\. //e"
-        silent exec ":v/^[-+a-zA-Z_0-9=]*$/d"
-        silent exec ':g/^\(help\|all\|clean\|depend\|Continuous.*\|Experimental.*\|Nightly.*\|edit_cache\|install\|list_install_components\|rebuild_cache\|test\|cmake_object_order_depends_target_.*\)$/d'
+        silent exec ":v/^[-+a-zA-Z_0-9=./]*$/d"
+        silent exec ':g/^\(help\|depend\|Continuous.*\|Experimental.*\|Nightly.*\|list_install_components\|cmake_object_order_depends_target_.*\)$/d'
         silent exec ":g/^$/d"
-        silent exec ":%!sort -u"
-        silent call cursor(1, 1)
-        silent exec ":normal! Oall\<CR>test\<CR>clean\<CR>install\<CR>edit_cache\<CR>rebuild_cache\<ESC>"
+        "silent exec ":%!sort -u"
         silent call cursor(1, 1)
         let @/ = l:pattern
         setlocal ro
