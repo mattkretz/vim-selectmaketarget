@@ -60,7 +60,12 @@ function! SelectMakeTarget(build)
     let l:pattern = @/
     let l:mp0 = substitute(&mp, '\$\*', 'cached_help', '')
     let l:mp1 = substitute(&mp, '\$\*', 'help', '')
+    let lastbuf = bufnr()
     silent vertical botright new
+    if (lastbuf == bufnr() || bufname() != "")
+        echoerr "Creating a new window & buffer failed for some reason. Aborting."
+        return
+    endif
     silent vertical resize 60
     normal IGenerating list of targets...
     redraw
