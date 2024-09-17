@@ -93,6 +93,9 @@ function! SelectMakeTarget(build)
         silent exec ":v/^[-+a-zA-Z_0-9=./]*$/d"
         silent exec ':g/^\(help\|depend\|Continuous.*\|Experimental.*\|Nightly.*\|list_install_components\|cmake_object_order_depends_target_.*\)$/d'
         silent exec ":g/^$/d"
+        if index(getline(1, line('$')), 'all') == -1
+            call append(0, 'all')
+        endif
         "silent exec ":%!sort -u"
         silent call cursor(1, 1)
         let @/ = l:pattern
